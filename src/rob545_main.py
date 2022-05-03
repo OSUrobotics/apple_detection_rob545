@@ -1588,20 +1588,19 @@ def main():
         apple_proxy_experiment.scan_apple_and_stem()
         # Place Apple and Stem in RVIZ
         apple_proxy_experiment.place_apple_and_stem()
-
         # Make Sure to go back to the preliminary position
         apple_proxy_experiment.go_preliminary_position()
-
 
         # ------------------------------------- Step 3 - Place ee in sphere --------------------------------------------
         number_of_shots = 5
 
         for shot in range(number_of_shots):
 
-            # Move to point on sphere
+            # TODO: Move to point on sphere
 
 
-            # Take shot
+
+            # TODO: Take shot
 
 
             # --- Arrange Rosbag file and subscribe to the topics that you want to record
@@ -1616,48 +1615,20 @@ def main():
             rosbag_proc = subprocess.Popen(command)
 
             # Create csv with the metadata
-            csv_data = [0] * 20
+            csv_data = [0] * 10
             csv_data[0] = "rob545"
-
-
-            csv_data[2] = f0_distal
-
-            csv_data[3] = f1_proximal
-
-            csv_data[4] = f1_distal
-
-            csv_data[5] = f2_proximal
-
-            csv_data[6] = f2_distal
-
-            csv_data[7] = slip
-
-            # --- Save the rest of the metadata and save it
             # Apple and Stem Ground Truth
             apple_proxy_experiment.baselink_cframe()
-            csv_data[11] = apple_proxy_experiment.apple_at_baselink
-            csv_data[12] = apple_proxy_experiment.calix_at_baselink
-            csv_data[13] = apple_proxy_experiment.stem_at_baselink
+            csv_data[1] = apple_proxy_experiment.apple_at_baselink
+            csv_data[2] = apple_proxy_experiment.calix_at_baselink
+            csv_data[3] = apple_proxy_experiment.stem_at_baselink
             # End Effector Pose
-            csv_data[14] = apple_proxy_experiment.pose_at_baselink
+            csv_data[4] = apple_proxy_experiment.pose_at_baselink
             # Nose that was added
             noise_at_tool = [x_noise, y_noise, z_noise, roll_noise, pitch_noise, 0]
-            csv_data[15] = noise_at_tool
+            csv_data[5] = noise_at_tool
             # Final Pose
             apple_proxy_experiment.write_csv(csv_data, sub_name)
-
-            # --- Open Gripper
-            print("::: Press 'Enter' to open the gripper :::")
-            raw_input()
-            apple_proxy_experiment.publish_event(4)
-            time.sleep(0.001)
-            apple_proxy_experiment.publish_event(1)                 # Event "1" means Gripper Open
-            time.sleep(0.001)
-            apple_proxy_experiment.open_hand_service()
-
-            time.sleep(4)
-            apple_proxy_experiment.publish_event(1)
-            time.sleep(0.001)
 
             # --- Stop rosbag recording after each trial
             for proc in psutil.process_iter():
@@ -1671,14 +1642,10 @@ def main():
             apple_proxy_experiment.adopt_pose()
 
             # --- At the end ----
-            print("\nHit 'Enter' to try the next apple pick")
+            print("\nHit 'Enter' to try the next Shot")
             raw_input()
 
-
-
-
-
-        print("================================= Apple experiment complete! ===============================")
+        print("================================= Apple shots complete! ===============================")
 
 
     except rospy.ROSInterruptException:
