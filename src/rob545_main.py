@@ -1622,15 +1622,16 @@ def main():
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
+        apple_proxy_experiment.sphereRadius = 0.50
         apple_proxy_experiment.place_apple_and_stem()
-
-
-
 
         # Make Sure to go back to the preliminary position
         apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 3 - Place ee in sphere --------------------------------------------
+        # Define the coordinates on the surface where to place the ee
+        apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
+
         number_of_shots = 5
 
         for shot in range(number_of_shots):
