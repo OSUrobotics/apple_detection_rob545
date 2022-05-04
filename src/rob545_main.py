@@ -1628,54 +1628,21 @@ def main():
         # Make Sure to go back to the preliminary position
         apple_proxy_experiment.go_preliminary_position()
 
-        # ------------------------------------- Step 3 - Place ee in sphere --------------------------------------------
+        # ------------------------------------- Step 3 - Place ee on sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
-        # TODO: Dfine shots as parameter
-        number_of_shots = 5
+        # TODO: Define shots as parameter
         apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
+        number_of_shots = len(apple_proxy_experiment.x_coord)
 
         for shot in range(number_of_shots):
 
-            # TODO: Move to point on sphere
+            # Reach each point saved at coordinates self.x_coord, self.y_coord and self.z_coord
+            apple_proxy_experiment.go_to_starting_position(shot)
 
             # TODO: Take shot
 
-            # # --- Arrange Rosbag file and subscribe to the topics that you want to record
-            # folder = "~apple_detection_robt545/shots/"
-            # name = "shot_" + str(shot)
-            # command = "rosbag record -O " + folder + name \
-            #           + " wrench" \
-            #             " joint_states" \
-            #             " /camera/image_raw" \
-            #             " /apple_trial_events"
-            # command = shlex.split(command)
-            # rosbag_proc = subprocess.Popen(command)
-            #
-            # # Create csv with the metadata
-            # csv_data = [0] * 10
-            # csv_data[0] = "rob545"
-            # # Apple and Stem Ground Truth
-            # apple_proxy_experiment.baselink_cframe()
-            # csv_data[1] = apple_proxy_experiment.apple_at_baselink
-            # csv_data[2] = apple_proxy_experiment.calix_at_baselink
-            # csv_data[3] = apple_proxy_experiment.stem_at_baselink
-            # # End Effector Pose
-            # csv_data[4] = apple_proxy_experiment.pose_at_baselink
-            # # Nose that was added
-            # noise_at_tool = [x_noise, y_noise, z_noise, roll_noise, pitch_noise, 0]
-            # csv_data[5] = noise_at_tool
-            # # Final Pose
-            # apple_proxy_experiment.write_csv(csv_data, sub_name)
-            #
-            # # --- Stop rosbag recording after each trial
-            # for proc in psutil.process_iter():
-            #     if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
-            #         proc.send_signal(subprocess.signal.SIGINT)
-            # rosbag_proc.send_signal(subprocess.signal.SIGINT)
-            # time.sleep(1)
 
             # Return to the ideal pose (simply the original real-apple pick)
-
 
             # --- At the end ----
             print("\nHit 'Enter' to try the next Shot")
