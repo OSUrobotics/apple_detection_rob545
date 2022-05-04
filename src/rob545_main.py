@@ -1630,14 +1630,13 @@ def main():
 
         # ------------------------------------- Step 3 - Place ee in sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
-        apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
-
+        # TODO: Dfine shots as parameter
         number_of_shots = 5
+        apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
 
         for shot in range(number_of_shots):
 
             # TODO: Move to point on sphere
-            apple_proxy_experiment.point_sampling()
 
             # TODO: Take shot
 
