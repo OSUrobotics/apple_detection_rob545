@@ -1636,7 +1636,7 @@ def main():
 
         for shot in range(number_of_shots):
 
-            # Reach each point saved at coordinates self.x_coord, self.y_coord and self.z_coord
+            # Place ee at each point saved with coordinates self.x_coord, self.y_coord and self.z_coord
             apple_proxy_experiment.go_to_starting_position(shot)
 
             # TODO: Take shot
