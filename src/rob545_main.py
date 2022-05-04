@@ -14,8 +14,8 @@ import math
 import numpy as np
 from numpy import pi, cos, sin, arccos, arange
 from random import random
-import sympy as sym
-import statistics as st
+# import sympy as sym
+# import statistics as st
 # --- ROS related packages
 import moveit_msgs.msg, geometry_msgs.msg, moveit_commander
 from geometry_msgs.msg import Pose, Point, Quaternion, Vector3, Polygon
@@ -185,6 +185,8 @@ class AppleProxyExperiment(object):
         self.probe_length = 0.1  # Length of probe in m
         self.probe_base_width = 1.3 * 0.0254  # Width of the base of the probe in m
         self.ref_frame = "world"
+
+        self.sphereRadius = 0.25
 
     ## ... Hand Related Functions...
 
@@ -361,6 +363,11 @@ class AppleProxyExperiment(object):
         # Place marker to see the apple in Rviz
         self.place_marker_sphere(1, 0, 0, 0.5, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
                                  self.apple_diam / 100)
+
+        # Place marker to see the SPHERE in Rviz
+        self.place_marker_sphere(0, 1, 0, 0.25, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
+                                 self.sphereRadius)
+
         # Place marker to see the Stem in Rviz
         self.place_marker_arrow(self.calix, self.stem)
 
@@ -541,6 +548,38 @@ class AppleProxyExperiment(object):
         current_joints = self.move_group.get_current_joint_values()
         # Print for debugging:
         # print("Final Joints State: ", current_joints)
+        return all_close(joint_goal, current_joints, 0.01)
+
+    def go_to_prelim_start(self):
+        """ This function is to avoid the robot from travelling around weird points"""
+
+        current_joints = self.move_group.get_current_joint_values()
+        print("Initial Joints State: ", current_joints)
+
+        # Place a marker for the apple
+        self.place_marker_sphere(1, 0, 0, 1.0, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z, 0.08)
+        # Place a marker for the sampling sphere
+        self.place_marker_sphere(0, 1, 0, 0.2, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z, self.sphereRadius * 2)
+        # Place a marker for the text
+        self.place_marker_text(self.apple_pos_x, self.apple_pos_y, self.apple_pos_z + 0.5, 0.1,
+                               "Going to Preliminary Starting Position")
+
+        # The following are the initial joints positions
+        joint_goal = self.move_group.get_current_joint_values()
+        joint_goal[0] = - 178 * pi / 180
+        joint_goal[1] = - 95 * pi / 180
+        joint_goal[2] = - 35 * pi / 180
+        joint_goal[3] = - 138 * pi / 180
+        joint_goal[4] = + 90 * pi / 180
+        joint_goal[5] = 0
+
+        self.move_group.go(joint_goal, wait=True)
+        self.move_group.stop()
+
+        # Print for debugging:
+        current_joints = self.move_group.get_current_joint_values()
+        print("Final Joints State: ", current_joints)
+
         return all_close(joint_goal, current_joints, 0.01)
 
     def go_preliminary_position(self):
@@ -1567,27 +1606,27 @@ def main():
         print("Apple Proxy experiments")
         apple_proxy_experiment = AppleProxyExperiment()
 
-        apple_proxy_experiment.open_hand_service()
-
         # --- Initialize UR5 at home position if needed
-        # print(" Press 'Enter' to move arm into the original UR5 home position")
-        # raw_input()
-        # apple_proxy_experiment.go_home()
+        print(" Press 'Enter' to move arm into the original UR5 home position")
+        raw_input()
+        apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
         raw_input()
         apple_proxy_experiment.go_preliminary_position()
 
-        # ---  Bring the robot to the scanned position and normal to the stem
-        # print("--- Align Arm with Stem")
-        # print("--- Press 'Enter' when ready")
-        # apple_proxy_experiment.align_with_stem()
-
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        apple_proxy_experiment.scan_apple_and_stem()
-        # Place Apple and Stem in RVIZ
+        # apple_proxy_experiment.scan_apple_and_stem()
+
+        # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
+        print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
+        raw_input()
         apple_proxy_experiment.place_apple_and_stem()
+
+
+
+
         # Make Sure to go back to the preliminary position
         apple_proxy_experiment.go_preliminary_position()
 
@@ -1597,49 +1636,46 @@ def main():
         for shot in range(number_of_shots):
 
             # TODO: Move to point on sphere
-
-
+            apple_proxy_experiment.point_sampling()
 
             # TODO: Take shot
 
-
-            # --- Arrange Rosbag file and subscribe to the topics that you want to record
-            folder = "~apple_detection_robt545/shots/"
-            name = "shot_" + str(shot)
-            command = "rosbag record -O " + folder + name \
-                      + " wrench" \
-                        " joint_states" \
-                        " /camera/image_raw" \
-                        " /apple_trial_events"
-            command = shlex.split(command)
-            rosbag_proc = subprocess.Popen(command)
-
-            # Create csv with the metadata
-            csv_data = [0] * 10
-            csv_data[0] = "rob545"
-            # Apple and Stem Ground Truth
-            apple_proxy_experiment.baselink_cframe()
-            csv_data[1] = apple_proxy_experiment.apple_at_baselink
-            csv_data[2] = apple_proxy_experiment.calix_at_baselink
-            csv_data[3] = apple_proxy_experiment.stem_at_baselink
-            # End Effector Pose
-            csv_data[4] = apple_proxy_experiment.pose_at_baselink
-            # Nose that was added
-            noise_at_tool = [x_noise, y_noise, z_noise, roll_noise, pitch_noise, 0]
-            csv_data[5] = noise_at_tool
-            # Final Pose
-            apple_proxy_experiment.write_csv(csv_data, sub_name)
-
-            # --- Stop rosbag recording after each trial
-            for proc in psutil.process_iter():
-                if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
-                    proc.send_signal(subprocess.signal.SIGINT)
-            rosbag_proc.send_signal(subprocess.signal.SIGINT)
-            time.sleep(1)
+            # # --- Arrange Rosbag file and subscribe to the topics that you want to record
+            # folder = "~apple_detection_robt545/shots/"
+            # name = "shot_" + str(shot)
+            # command = "rosbag record -O " + folder + name \
+            #           + " wrench" \
+            #             " joint_states" \
+            #             " /camera/image_raw" \
+            #             " /apple_trial_events"
+            # command = shlex.split(command)
+            # rosbag_proc = subprocess.Popen(command)
+            #
+            # # Create csv with the metadata
+            # csv_data = [0] * 10
+            # csv_data[0] = "rob545"
+            # # Apple and Stem Ground Truth
+            # apple_proxy_experiment.baselink_cframe()
+            # csv_data[1] = apple_proxy_experiment.apple_at_baselink
+            # csv_data[2] = apple_proxy_experiment.calix_at_baselink
+            # csv_data[3] = apple_proxy_experiment.stem_at_baselink
+            # # End Effector Pose
+            # csv_data[4] = apple_proxy_experiment.pose_at_baselink
+            # # Nose that was added
+            # noise_at_tool = [x_noise, y_noise, z_noise, roll_noise, pitch_noise, 0]
+            # csv_data[5] = noise_at_tool
+            # # Final Pose
+            # apple_proxy_experiment.write_csv(csv_data, sub_name)
+            #
+            # # --- Stop rosbag recording after each trial
+            # for proc in psutil.process_iter():
+            #     if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
+            #         proc.send_signal(subprocess.signal.SIGINT)
+            # rosbag_proc.send_signal(subprocess.signal.SIGINT)
+            # time.sleep(1)
 
             # Return to the ideal pose (simply the original real-apple pick)
-            print("Going back")
-            apple_proxy_experiment.adopt_pose()
+
 
             # --- At the end ----
             print("\nHit 'Enter' to try the next Shot")
