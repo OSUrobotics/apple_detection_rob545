@@ -1657,5 +1657,8 @@ def main():
         return
 
 
+def take_shot():
+    pass
+
 if __name__ == '__main__':
     main()
