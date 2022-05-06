@@ -184,7 +184,7 @@ class AppleProxyExperiment(object):
         # Probe's parameters
         self.probe_length = 0.1  # Length of probe in m
         self.probe_base_width = 1.3 * 0.0254  # Width of the base of the probe in m
-        self.ref_frame = "world"
+        self.ref_frame = "base_link"
 
         self.sphereRadius = 0.25
 
@@ -364,9 +364,11 @@ class AppleProxyExperiment(object):
         self.place_marker_sphere(1, 0, 0, 0.5, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
                                  self.apple_diam / 100)
 
+        print("blalsdasd")
+
         # Place marker to see the SPHERE in Rviz
         self.place_marker_sphere(0, 1, 0, 0.25, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
-                                 self.sphereRadius)
+                                 2*self.sphereRadius)
 
         # Place marker to see the Stem in Rviz
         self.place_marker_arrow(self.calix, self.stem)
@@ -693,7 +695,7 @@ class AppleProxyExperiment(object):
         self.previous_pose = current_pose
 
         # Place a blue dot in the sphere's surface to keep track of all the sampled points
-        self.place_marker(0, 0, 1, 1, x, y, z, 0.02)
+        self.place_marker_sphere(0, 0, 1, 1, x, y, z, 0.02)
 
         success = all_close(pose_goal, current_pose, 0.01)
         self.pose_starts.append(success)
@@ -1074,7 +1076,7 @@ class AppleProxyExperiment(object):
     This function samples points evenly distributed from the surface of a sphere
     Source: https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere
     """
-        num_pts = 8 * 30
+        num_pts = 8 * 5
         indices = arange(0, num_pts, dtype=float) + 0.5
 
         phi = arccos(1 - 2 * indices / num_pts)
@@ -1085,12 +1087,11 @@ class AppleProxyExperiment(object):
 
         # Further selection of points for only one quarter of the sphere
         for i in range(len(x)):
-            if x[i] < 0:  # To get only half sphere
-                if z[i] > 0:  # To get only one quarter of the sphere
-                    if y[i] > 0:  # To get only one eight of the sphere
-                        self.x_coord.append(x[i] * self.sphereRadius)
-                        self.y_coord.append(y[i] * self.sphereRadius)
-                        self.z_coord.append(z[i] * self.sphereRadius)
+            if y[i] < -(self.sphereRadius * 0.3):  # To get only one eight of the sphere
+                if z[i] < (self.sphereRadius * 0.8):
+                    self.x_coord.append(x[i] * self.sphereRadius)
+                    self.y_coord.append(y[i] * self.sphereRadius)
+                    self.z_coord.append(z[i] * self.sphereRadius)
 
     def add_cartesian_noise(self, x_noise, y_noise, z_noise):
 
@@ -1622,7 +1623,7 @@ def main():
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
-        apple_proxy_experiment.sphereRadius = 0.50
+        apple_proxy_experiment.sphereRadius = 0.4   # Radius in [m]
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
