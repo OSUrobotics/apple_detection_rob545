@@ -30,6 +30,8 @@ import csv
 # --- Visualization packages
 import matplotlib.pyplot as pp
 
+from appple_detection.srv import CollectImageData
+
 
 def all_close(goal, actual, tolerance):
     """
@@ -64,6 +66,9 @@ class AppleProxyExperiment(object):
         ## First initialize `moveit_commander`_ and a `rospy`_ node:
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
+        rospy.wait_for_service('collect_image')
+
+        self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
         ## kinematic model and the robot's current joint states
@@ -1611,24 +1616,9 @@ def main():
         raw_input()
         apple_proxy_experiment.go_home()
 
-        # --- Bring UR5 into a preliminary position to avoid weird poses
-        print(" Press 'Enter' to move arm into a preliminary starting position")
-        raw_input()
-        apple_proxy_experiment.go_preliminary_position()
-
-        # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        # apple_proxy_experiment.scan_apple_and_stem()
-
-        # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
-        print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
-        raw_input()
-        apple_proxy_experiment.sphereRadius = 0.4   # Radius in [m]
-        apple_proxy_experiment.place_apple_and_stem()
-
-        # Make Sure to go back to the preliminary position
-        apple_proxy_experiment.go_preliminary_position()
-
-        # ------------------------------------- Step 3 - Place ee on sphere --------------------------------------------
+        # --- Bring UR5 into a prtry:
+			answer = doubler(i)
+		except rospy.ServiceException as e:----------- Step 3 - Place ee on sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
         apple_proxy_experiment.pointsPerOctant = 5
         apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
@@ -1640,7 +1630,7 @@ def main():
             apple_proxy_experiment.go_to_starting_position(shot)
 
             # TODO: Take shot
-
+            
 
             # Return to the ideal pose (simply the original real-apple pick)
 
