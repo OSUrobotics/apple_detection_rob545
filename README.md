@@ -8,7 +8,7 @@ https://github.com/IntelRealSense/realsense-ros
 # Instructions
 
 ## Other required packages
-Step in the same workspace: ~/your_ws/src/
+Step in the same workspace: ~/your_ws/src/  
 `git clone https://github.com/velasale/apple_proxy`
 
 ## Just visualization (Rviz) 
