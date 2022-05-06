@@ -1632,7 +1632,7 @@ def main():
         # ------------------------------------- Step 3 - Place ee on sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
         apple_proxy_experiment.pointsPerOctant = 5
-        apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
+        apple_proxy_experiment.point_sampling()                         # coords saved at self.x_coord8
         number_of_shots = len(apple_proxy_experiment.x_coord)
 
         for shot in range(number_of_shots):
@@ -1640,10 +1640,25 @@ def main():
             # Place ee at each point saved with coordinates self.x_coord, self.y_coord and self.z_coord
             apple_proxy_experiment.go_to_starting_position(shot)
 
-            # TODO: Take shot
+            # # --- Arrange Rosbag file and subscribe to the topics that you want to record
 
+            rosbag_name = "robt545_shot_" + str(int(shot))
+            command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bag_files/" \
+                      + rosbag_name + " joint_states"
+
+            command = shlex.split(command)
+            rosbag_proc = subprocess.Popen(command)
+
+            # TODO: Take shot
             service_answer = apple_proxy_experiment.collect_image(True)
-            
+
+            # --- Stop rosbag recording after each trial
+            for proc in psutil.process_iter():
+                if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
+                    proc.send_signal(subprocess.signal.SIGINT)
+            rosbag_proc.send_signal(subprocess.signal.SIGINT)
+            time.sleep(1)
+
 
             # Return to the ideal pose (simply the original real-apple pick)
 
@@ -1652,7 +1667,6 @@ def main():
             raw_input()
 
         print("================================= Apple shots complete! ===============================")
-
 
     except rospy.ROSInterruptException:
         return
