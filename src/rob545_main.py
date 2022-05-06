@@ -1622,7 +1622,7 @@ def main():
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
-        apple_proxy_experiment.sphereRadius = 0.4   # Radius in [m]
+        apple_proxy_experiment.sphereRadius = 0.6   # Radius in [m]
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
