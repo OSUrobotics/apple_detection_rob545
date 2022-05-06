@@ -187,6 +187,7 @@ class AppleProxyExperiment(object):
         self.ref_frame = "base_link"
 
         self.sphereRadius = 0.25
+        self.pointsPerOctant = 10
 
     ## ... Hand Related Functions...
 
@@ -364,11 +365,10 @@ class AppleProxyExperiment(object):
         self.place_marker_sphere(1, 0, 0, 0.5, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
                                  self.apple_diam / 100)
 
-        print("blalsdasd")
 
         # Place marker to see the SPHERE in Rviz
         self.place_marker_sphere(0, 1, 0, 0.25, self.apple_pos_x, self.apple_pos_y, self.apple_pos_z,
-                                 2*self.sphereRadius)
+                                 2 * self.sphereRadius)
 
         # Place marker to see the Stem in Rviz
         self.place_marker_arrow(self.calix, self.stem)
@@ -1076,7 +1076,7 @@ class AppleProxyExperiment(object):
     This function samples points evenly distributed from the surface of a sphere
     Source: https://stackoverflow.com/questions/9600801/evenly-distributing-n-points-on-a-sphere
     """
-        num_pts = 8 * 5
+        num_pts = 8 * self.pointsPerOctant
         indices = arange(0, num_pts, dtype=float) + 0.5
 
         phi = arccos(1 - 2 * indices / num_pts)
@@ -1087,11 +1087,10 @@ class AppleProxyExperiment(object):
 
         # Further selection of points for only one quarter of the sphere
         for i in range(len(x)):
-            if y[i] < -(self.sphereRadius * 0.3):  # To get only one eight of the sphere
-                if z[i] < (self.sphereRadius * 0.8):
-                    self.x_coord.append(x[i] * self.sphereRadius)
-                    self.y_coord.append(y[i] * self.sphereRadius)
-                    self.z_coord.append(z[i] * self.sphereRadius)
+            if y[i] < (- self.sphereRadius * 0.2):  # To get only one eight of the sphere
+                self.x_coord.append(x[i] * self.sphereRadius)
+                self.y_coord.append(y[i] * self.sphereRadius)
+                self.z_coord.append(z[i] * self.sphereRadius)
 
     def add_cartesian_noise(self, x_noise, y_noise, z_noise):
 
@@ -1631,7 +1630,7 @@ def main():
 
         # ------------------------------------- Step 3 - Place ee on sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
-        # TODO: Define shots as parameter
+        apple_proxy_experiment.pointsPerOctant = 5
         apple_proxy_experiment.point_sampling()     # coords saved at self.x_coord8
         number_of_shots = len(apple_proxy_experiment.x_coord)
 
