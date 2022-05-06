@@ -14,4 +14,4 @@ https://github.com/IntelRealSense/realsense-ros
 
 
 
-$ rosrun apple_detection rob545_main.py
+`rosrun apple_detection rob545_main.py`
