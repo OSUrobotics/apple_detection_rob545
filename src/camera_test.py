@@ -114,7 +114,7 @@ class ImageCollector:
 		
 		while True:
 			try:
-				translation, rotation = listener.lookupTransform('j2s7s300_link_base', 'j2s7s300_end_effector', rospy.Time()) # change to the ur5
+				translation, rotation = listener.lookupTransform('base_link', 'tool0', rospy.Time()) # change to the ur5
 				break  # once the transform is obtained move on
 			except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
 				continue  # if it fails try again
