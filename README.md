@@ -7,7 +7,7 @@ https://github.com/IntelRealSense/realsense-ros
 
 # Instructions
 
-## Within Rviz 
+## Just visualization (Rviz) 
 Terminal 1:
 `roslaunch apple_proxy pickApp.launch`
 
