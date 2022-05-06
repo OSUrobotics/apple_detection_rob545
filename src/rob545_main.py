@@ -28,6 +28,7 @@ import csv
 # --- Visualization packages
 import matplotlib.pyplot as pp
 
+from apple_detection.srv import CollectImageData
 
 def all_close(goal, actual, tolerance):
     """
@@ -62,6 +63,9 @@ class AppleProxyExperiment(object):
         ## First initialize `moveit_commander`_ and a `rospy`_ node:
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
+        
+        rospy.wait_for_service('collect_image')
+        self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
         ## kinematic model and the robot's current joint states
@@ -1638,6 +1642,8 @@ def main():
 
             # TODO: Take shot
 
+            service_answer = apple_proxy_experiment.collect_image(True)
+            
 
             # Return to the ideal pose (simply the original real-apple pick)
 

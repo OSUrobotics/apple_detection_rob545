@@ -15,7 +15,7 @@ from pathlib import Path
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
 
-from sensor_msgs.msg import PointCloud2, Image
+from sensor_msgs.msg import PointCloud2, Image, JointState
 import sensor_msgs.point_cloud2 as pc2
 from apple_detection.srv import CollectImageData, CollectImageDataResponse
 
@@ -28,6 +28,7 @@ class ImageCollector:
 		self.rgb_image = None
 		self.depth_image = None
 		self.depth_array = None
+		self.joint_angles = []
 		self.bridge = CvBridge()
 		self.pose_number = 0
 		self.working_directory = os.getcwd()
@@ -41,9 +42,10 @@ class ImageCollector:
 			cv2.imwrite("{}/rgb_pose{}.bmp".format(directory_loc,self.pose_number), self.rgb_image)
 			cv2.imwrite("{}/depth_pose{}.bmp".format(directory_loc,self.pose_number), self.depth_image)
 			np.savetxt("{}/depth_pose{}.csv".format(directory_loc,self.pose_number), self.depth_array, delimiter=",")
-			# np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
-			# transform = self.get_transform()
-			# np.savetxt("pose{}_transform.csv".format(self.pose_number), transform, delimiter=",")
+			np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
+			transform = self.get_transform()
+			np.savetxt("{}/transform_pose{}.csv".format(self.pose_number), transform, delimiter=",")
+			np.savetxt("{}/joint_angles_pose{}.csv".format(self.pose_number), self.joint_angles, delimiter=",")
 			self.pose_number += 1
 			
 			return CollectImageDataResponse(1)
@@ -104,7 +106,8 @@ class ImageCollector:
 		cv2_img = bridge.imgmsg_to_cv2(image, "passthrough")
 		cv2.imwrite("depth_color_test.bmp", cv2_img)
 
-
+	def collect_joint_angles(self, angles):
+		self.joint_angles = np.array(angles)
 
 	def get_transform(self):
 		listener = tf.TransformListener()
@@ -141,6 +144,8 @@ if __name__ == "__main__":
 	sub2 = rospy.Subscriber('/camera/color/image_raw', Image, image.collect_rgb)
 	# sub2 = rospy.Subscriber('/camera/depth/image_rect_raw', Image, image.collect_depth)
 	sub3 = rospy.Subscriber('/camera/aligned_depth_to_color/image_raw', Image, image.collect_depth)
+	
+	subscriber = rospy.Subscriber('/joint_states', JointState, image.collect_joint_angles)
 	# sub2 = rospy.Subscriber('/camera/extrinsics/depth_to_color', Image, image.collect_depth_color)
 
 	rospy.spin()
