@@ -44,7 +44,13 @@ class ImageCollector:
 			np.savetxt("{}/depth_pose{}.csv".format(directory_loc,self.pose_number), self.depth_array, delimiter=",")
 			np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
 			transform = self.get_transform()
-			np.savetxt("{}/transform_pose{}.csv".format(self.pose_number), transform, delimiter=",")
+
+			file = open("{}transform_pose{}.csv".format(self.pose_number), "w")
+			wr = csv.writer(file, dialect='excel')
+			for i in range(len(transform)):
+				wr.writerow(transform[i])
+			file.close()
+			# np.savetxt("{}/transform_pose{}.csv".format(self.pose_number), transform, delimiter=",")
 			np.savetxt("{}/joint_angles_pose{}.csv".format(self.pose_number), self.joint_angles, delimiter=",")
 			self.pose_number += 1
 			
@@ -121,14 +127,7 @@ class ImageCollector:
 
 		transform_mat = listener.fromTranslationRotation(translation, rotation)
 
-		return np.array(transform_mat)
-		# file = open(dir_path + "/data/TransformMatrix_" + str(n) + ".csv", "w")
-		# wr = csv.writer(file, dialect='excel')
-
-		# for i in range(len(transform_mat)):
-			# wr.writerow(transform_mat[i])
-		
-		# file.close()
+		return transform_mat
 
 
 
