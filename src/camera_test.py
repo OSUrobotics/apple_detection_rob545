@@ -121,7 +121,7 @@ class ImageCollector:
 
 		transform_mat = listener.fromTranslationRotation(translation, rotation)
 
-		return transform_mat
+		return np.array(transform_mat)
 		# file = open(dir_path + "/data/TransformMatrix_" + str(n) + ".csv", "w")
 		# wr = csv.writer(file, dialect='excel')
 
