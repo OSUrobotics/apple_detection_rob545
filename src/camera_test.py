@@ -14,7 +14,7 @@ from pathlib import Path
 
 from cv_bridge import CvBridge, CvBridgeError
 import cv2
-
+import csv
 from sensor_msgs.msg import PointCloud2, Image, JointState
 import sensor_msgs.point_cloud2 as pc2
 from apple_detection.srv import CollectImageData, CollectImageDataResponse
@@ -45,13 +45,18 @@ class ImageCollector:
 			np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
 			transform = self.get_transform()
 
-			file = open("{}transform_pose{}.csv".format(self.pose_number), "w")
+			file = open("{}/transform_pose{}.csv".format(self.pose_number), "w")
 			wr = csv.writer(file, dialect='excel')
 			for i in range(len(transform)):
 				wr.writerow(transform[i])
 			file.close()
 			# np.savetxt("{}/transform_pose{}.csv".format(self.pose_number), transform, delimiter=",")
-			np.savetxt("{}/joint_angles_pose{}.csv".format(self.pose_number), self.joint_angles, delimiter=",")
+			# np.savetxt("{}/joint_angles_pose{}.csv".format(self.pose_number), self.joint_angles, delimiter=",")
+			file = open("{}/joint_angles_pose{}.csv".format(self.pose_number), "w")
+			wr = csv.writer(file, dialect='excel')
+			for i in range(len(transform)):
+				wr.writerow(transform[i])
+			file.close()
 			self.pose_number += 1
 			
 			return CollectImageDataResponse(1)
@@ -113,7 +118,7 @@ class ImageCollector:
 		cv2.imwrite("depth_color_test.bmp", cv2_img)
 
 	def collect_joint_angles(self, angles):
-		self.joint_angles = np.array(angles)
+		self.joint_angles =  angles.position
 
 	def get_transform(self):
 		listener = tf.TransformListener()
