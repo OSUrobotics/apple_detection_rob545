@@ -1642,6 +1642,7 @@ def main():
 
             # --- Arrange Rosbag file and subscribe to the topics that you want to record
             rosbag_name = "rob545_shot_" + str(int(shot))
+            # command = "rosbag record -O " + "/media/avl/CMGDATA/rob545_data/bagfiles/" \
             command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
                       + rosbag_name \
                       + " joint_states" \
@@ -1651,9 +1652,8 @@ def main():
             command = shlex.split(command)
             rosbag_proc = subprocess.Popen(command)
 
+            time.sleep(0.5)
 
-            # TODO: Take shot
-            service_answer = apple_proxy_experiment.collect_image(True)
 
             # --- Stop rosbag recording after each trial
             for proc in psutil.process_iter():
@@ -1661,6 +1661,9 @@ def main():
                     proc.send_signal(subprocess.signal.SIGINT)
             rosbag_proc.send_signal(subprocess.signal.SIGINT)
             time.sleep(1)
+
+            # TODO: Take shot
+            service_answer = apple_proxy_experiment.collect_image(True)
 
 
             # Return to the ideal pose (simply the original real-apple pick)
