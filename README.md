@@ -9,7 +9,9 @@ https://github.com/IntelRealSense/realsense-ros
 
 ## Other required packages
 Step in the same workspace: ~/your_ws/src/  
-`git clone https://github.com/velasale/apple_proxy`
+```console
+git clone https://github.com/velasale/apple_proxy
+```
 
 
 Realsense camera install:
@@ -49,14 +51,18 @@ Terminal 3 (Visualization - Rviz):
 roslaunch ur5e_moveit_config moveit_rviz.launch config:=true
 ```
 
-Terminal 4 (Our code):  
+Terminal 4 (run command for camera):
+```console
+roslaunch realsense2_camera rs_camera.launch filters:=pointcloud align_depth:=true 
+```
+
+Terminal 5 (Our code):  
 ```console
 rosrun apple_detection rob545_main.py
 ```
 
-
-run command for camera:
-
+Terminal 6 (Our code):  
 ```console
-roslaunch realsense2_camera rs_camera.launch filters:=pointcloud align_depth:=true 
+rosrun apple_detection camera_test.py
 ```
+

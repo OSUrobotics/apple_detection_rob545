@@ -1643,7 +1643,11 @@ def main():
             # --- Arrange Rosbag file and subscribe to the topics that you want to record
             rosbag_name = "rob545_shot_" + str(int(shot))
             command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
-                      + rosbag_name + " joint_states"
+                      + rosbag_name \
+                      + " joint_states" \
+                        " camera/aligned_depth_to_camera/image_raw" \
+                        " camera/depth/image_rect_raw"
+
             command = shlex.split(command)
             rosbag_proc = subprocess.Popen(command)
 
