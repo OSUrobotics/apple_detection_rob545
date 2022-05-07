@@ -45,14 +45,14 @@ class ImageCollector:
 			np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
 			transform = self.get_transform()
 
-			file = open("{}/transform_pose{}.csv".format(self.pose_number), "w")
+			file = open("{}/transform_pose{}.csv".format(directory_loc, self.pose_number), "w")
 			wr = csv.writer(file, dialect='excel')
 			for i in range(len(transform)):
 				wr.writerow(transform[i])
 			file.close()
 			# np.savetxt("{}/transform_pose{}.csv".format(self.pose_number), transform, delimiter=",")
 			# np.savetxt("{}/joint_angles_pose{}.csv".format(self.pose_number), self.joint_angles, delimiter=",")
-			file = open("{}/joint_angles_pose{}.csv".format(self.pose_number), "w")
+			file = open("{}/joint_angles_pose{}.csv".format(directory_loc, self.pose_number), "w")
 			wr = csv.writer(file, dialect='excel')
 			for i in range(len(transform)):
 				wr.writerow(transform[i])
