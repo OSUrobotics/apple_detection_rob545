@@ -1640,14 +1640,13 @@ def main():
             # Place ee at each point saved with coordinates self.x_coord, self.y_coord and self.z_coord
             apple_proxy_experiment.go_to_starting_position(shot)
 
-            # # --- Arrange Rosbag file and subscribe to the topics that you want to record
-
-            rosbag_name = "robt545_shot_" + str(int(shot))
-            command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bag_files/" \
+            # --- Arrange Rosbag file and subscribe to the topics that you want to record
+            rosbag_name = "rob545_shot_" + str(int(shot))
+            command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
                       + rosbag_name + " joint_states"
-
             command = shlex.split(command)
             rosbag_proc = subprocess.Popen(command)
+
 
             # TODO: Take shot
             service_answer = apple_proxy_experiment.collect_image(True)
