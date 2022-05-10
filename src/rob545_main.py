@@ -1598,12 +1598,21 @@ class AppleProxyExperiment(object):
         hand_data = [self.initial_yaw_angle, self.initial_pitch_angle, self.initial_roll_angle]
         return hand_data
 
-    def save_bagfile(self, name, iteration, time):
+    def save_bagfile(self, name, iteration, bagfile_time):
         """
         Saves bagfile by simply doing evoking command line
+
+        Parameters
+        ----------
+        time : object
         """
-        folder = ""
-        topics = "joint_states"
+        folder = "Projects/rob545_data/bagfiles/"
+        topics = " joint_states" \
+                 " /camera/depth/color/points" \
+                 " /camera/color/image_raw" \
+                 " /camera/depth/image_rect_raw"\
+                 " /camera/aligned_depth_to_color/image_raw"
+
         name = name + "_" + str(iteration)
         command = "rosbag record -O" + folder + name + ".bag " + topics
 
@@ -1611,23 +1620,19 @@ class AppleProxyExperiment(object):
         command = shlex.split(command)
         rosbag_proc = subprocess.Popen(command)
 
-        time.sleep(1)
+        time.sleep(bagfile_time)
 
         # Stop recording
         for proc in psutil.process_iter():
             if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
                 proc.send_signal(subprocess.signal.SIGNIT)
         rosbag_proc.send_signal(subprocess.signal.SIGINT)
-        time.sleep(1)
-
-
-
+        time.sleep(0.5)
 
 
 def main():
     try:
 
-        # TODO Fix why is not recording bagfiles... at least the joint_states
         # TODO Fix rviz
         # TODO Update the urdf with the location of the camera
         # TODO Fix the apple scanning process - probe (palm)
@@ -1642,15 +1647,15 @@ def main():
         # --- Initialize UR5 at home position if needed
         print(" Press 'Enter' to move arm into the original UR5 home position")
         raw_input()
-        apple_proxy_experiment.go_home()
+        # apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
         raw_input()
-        apple_proxy_experiment.go_preliminary_position()
+        # apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        apple_proxy_experiment.scan_apple_and_stem()
+        # apple_proxy_experiment.scan_apple_and_stem()
 
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
@@ -1659,7 +1664,7 @@ def main():
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
-        apple_proxy_experiment.go_preliminary_position()
+        # apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 3 - Place ee on sphere --------------------------------------------
         # Define the coordinates on the surface where to place the ee
@@ -1673,7 +1678,7 @@ def main():
             apple_proxy_experiment.go_to_starting_position(shot)
 
             # Take a bagfile shot of the topics
-            apple_proxy_experiment.save_bagfile("trial", shot, 1)
+            apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
 
             # TODO: Take shot
             # service_answer = apple_proxy_experiment.collect_image(True)
