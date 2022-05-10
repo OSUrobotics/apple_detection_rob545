@@ -1530,7 +1530,6 @@ class AppleProxyExperiment(object):
                                   stem_at_baselink.pose.position.y,
                                   stem_at_baselink.pose.position.z]
 
-
     ## ... Data saving related functions
 
     def noise_to_string(self):
@@ -1599,14 +1598,39 @@ class AppleProxyExperiment(object):
         hand_data = [self.initial_yaw_angle, self.initial_pitch_angle, self.initial_roll_angle]
         return hand_data
 
+    def save_bagfile(self, name, iteration, time):
+        """
+        Saves bagfile by simply doing evoking command line
+        """
+        folder = ""
+        topics = "joint_states"
+        name = name + "_" + str(iteration)
+        command = "rosbag record -O" + folder + name + ".bag " + topics
+
+        # Start recording
+        command = shlex.split(command)
+        rosbag_proc = subprocess.Popen(command)
+
+        time.sleep(1)
+
+        # Stop recording
+        for proc in psutil.process_iter():
+            if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
+                proc.send_signal(subprocess.signal.SIGNIT)
+        rosbag_proc.send_signal(subprocess.signal.SIGINT)
+        time.sleep(1)
+
+
+
+
 
 def main():
     try:
 
-        # TODO Update the urdf with the location of the camera
         # TODO Fix why is not recording bagfiles... at least the joint_states
-        # TODO Fix the apple scanning process - probe (palm)
         # TODO Fix rviz
+        # TODO Update the urdf with the location of the camera
+        # TODO Fix the apple scanning process - probe (palm)
         # TODO Cframes
         # TODO account for the frames
         # TODO male part of dove tail
@@ -1648,33 +1672,11 @@ def main():
             # Place ee at each point saved with coordinates self.x_coord, self.y_coord and self.z_coord
             apple_proxy_experiment.go_to_starting_position(shot)
 
-            # --- Arrange Rosbag file and subscribe to the topics that you want to record
-            # rosbag_name = "rob545_shot_" + str(int(shot))
-            # # command = "rosbag record -O " + "/media/avl/CMGDATA/rob545_data/bagfiles/" \
-            # command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
-            #           + rosbag_name \
-            #           + " /joint_states" \
-            #             # " camera/aligned_depth_to_camera/image_raw" \
-            #             # " camera/depth/image_rect_raw"
-            #
-            # command = "rosbag record -O trial.bag /joint_states"
-            # command = shlex.split(command)
-            # rosbag_proc = subprocess.Popen(command)
-            #
-            # time.sleep(0.5)
-
-            # # --- Stop rosbag recording after each trial
-            # for proc in psutil.process_iter():
-            #     if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
-            #         proc.send_signal(subprocess.signal.SIGINT)
-            # rosbag_proc.send_signal(subprocess.signal.SIGINT)
-            # time.sleep(1)
+            # Take a bagfile shot of the topics
+            apple_proxy_experiment.save_bagfile("trial", shot, 1)
 
             # TODO: Take shot
             # service_answer = apple_proxy_experiment.collect_image(True)
-
-
-            # Return to the ideal pose (simply the original real-apple pick)
 
             # --- At the end ----
             print("\nHit 'Enter' to try the next Shot")
