@@ -24,7 +24,7 @@ sudo apt-get install ros-melodic-realsense2-camera
 sudo apt-get install ros-melodic-realsense2-description
 ```
 
-## Just visualization (Rviz) 
+## Only visualization (Rviz) 
 Terminal 1 (Motion planner - MoveIt & visualization - Rviz):  
 ```console
 roslaunch apple_proxy pickApp.launch
