@@ -1647,12 +1647,12 @@ def main():
         # --- Initialize UR5 at home position if needed
         print(" Press 'Enter' to move arm into the original UR5 home position")
         raw_input()
-        # apple_proxy_experiment.go_home()
+        apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
         raw_input()
-        # apple_proxy_experiment.go_preliminary_position()
+        apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
         # apple_proxy_experiment.scan_apple_and_stem()

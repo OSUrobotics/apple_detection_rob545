@@ -41,19 +41,19 @@ Terminal 1 (UR5 drivers):
 roslaunch ur_robot_driver ur5e_bringup.launch robot_ip:=169.254.177.232
 ```
 
-Terminal 2 (Motion planner - MoveIt):  
+Terminal 2 (Motion planner - MoveIt & visualization - Rviz):  
 ```console
-roslaunch ur5e_moveit_config ur5e_moveit_planning_execution.launch
+roslaunch apple_proxy pickApp_real.launch
 ```
 
-Terminal 3 (Visualization - Rviz):  
-```console
-roslaunch ur5e_moveit_config moveit_rviz.launch config:=true
-```
-
-Terminal 4 (run command for camera):
+Terminal 3 (run command for camera):
 ```console
 roslaunch realsense2_camera rs_camera.launch filters:=pointcloud align_depth:=true 
+```
+
+Terminal 4 (Our code):  
+```console
+rosrun apple_detection camera_test.py
 ```
 
 Terminal 5 (Our code):  
@@ -61,8 +61,4 @@ Terminal 5 (Our code):
 rosrun apple_detection rob545_main.py
 ```
 
-Terminal 6 (Our code):  
-```console
-rosrun apple_detection camera_test.py
-```
 
