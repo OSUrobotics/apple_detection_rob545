@@ -237,9 +237,9 @@ class AppleProxyExperiment(object):
         caption.scale.z = scale
 
         # Color, as an RGB triple, from 0 to 1.
-        caption.color.r = 1
-        caption.color.g = 1
-        caption.color.b = 1
+        caption.color.r = 0
+        caption.color.g = 0
+        caption.color.b = 0
         caption.color.a = 1
 
         caption.text = text
@@ -696,11 +696,15 @@ class AppleProxyExperiment(object):
         # Save this pose in a global variable, to come back to it after picking the apple
         self.previous_pose = current_pose
 
-        # Place a blue dot in the sphere's surface to keep track of all the sampled points
-        self.place_marker_sphere(0, 0, 1, 1, x, y, z, 0.02)
-
         success = all_close(pose_goal, current_pose, 0.01)
         self.pose_starts.append(success)
+
+        # Place a blue dot in the sphere's surface to keep track of all the sampled points
+        if success:
+            self.place_marker_sphere(0, 1, 0, 1, x, y, z, 0.04)
+        else:
+            self.place_marker_sphere(1, 0, 0, 1, x, y, z, 0.02)
+
         print("Pose Starts history", self.pose_starts)
 
         return success
@@ -1633,11 +1637,12 @@ class AppleProxyExperiment(object):
 def main():
     try:
 
-        # TODO Fix rviz
         # TODO Update the urdf with the location of the camera
+
         # TODO Fix the apple scanning process - probe (palm)
         # TODO Cframes
         # TODO account for the frames
+
         # TODO male part of dove tail
 
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
