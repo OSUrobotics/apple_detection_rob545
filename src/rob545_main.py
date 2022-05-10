@@ -1610,12 +1610,12 @@ def main():
         # --- Initialize UR5 at home position if needed
         print(" Press 'Enter' to move arm into the original UR5 home position")
         raw_input()
-        apple_proxy_experiment.go_home()
+        # apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
         raw_input()
-        apple_proxy_experiment.go_preliminary_position()
+        # apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
         # apple_proxy_experiment.scan_apple_and_stem()
@@ -1623,7 +1623,7 @@ def main():
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
-        apple_proxy_experiment.sphereRadius = 0.5   # Radius in [m]
+        apple_proxy_experiment.sphereRadius = 0.4   # Radius in [m]
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
@@ -1641,29 +1641,29 @@ def main():
             apple_proxy_experiment.go_to_starting_position(shot)
 
             # --- Arrange Rosbag file and subscribe to the topics that you want to record
-            rosbag_name = "rob545_shot_" + str(int(shot))
-            # command = "rosbag record -O " + "/media/avl/CMGDATA/rob545_data/bagfiles/" \
-            command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
-                      + rosbag_name \
-                      + " joint_states" \
-                        " camera/aligned_depth_to_camera/image_raw" \
-                        " camera/depth/image_rect_raw"
+            # rosbag_name = "rob545_shot_" + str(int(shot))
+            # # command = "rosbag record -O " + "/media/avl/CMGDATA/rob545_data/bagfiles/" \
+            # command = "rosbag record -O " + "/home/avl/ur5e_ws/src/apple_detection_rob545/bagfiles/" \
+            #           + rosbag_name \
+            #           + " /joint_states" \
+            #             # " camera/aligned_depth_to_camera/image_raw" \
+            #             # " camera/depth/image_rect_raw"
+            #
+            # command = "rosbag record -O trial.bag /joint_states"
+            # command = shlex.split(command)
+            # rosbag_proc = subprocess.Popen(command)
+            #
+            # time.sleep(0.5)
 
-            command = shlex.split(command)
-            rosbag_proc = subprocess.Popen(command)
-
-            time.sleep(0.5)
-
-
-            # --- Stop rosbag recording after each trial
-            for proc in psutil.process_iter():
-                if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
-                    proc.send_signal(subprocess.signal.SIGINT)
-            rosbag_proc.send_signal(subprocess.signal.SIGINT)
-            time.sleep(1)
+            # # --- Stop rosbag recording after each trial
+            # for proc in psutil.process_iter():
+            #     if "record" in proc.name() and set(command[2:]).issubset(proc.cmdline()):
+            #         proc.send_signal(subprocess.signal.SIGINT)
+            # rosbag_proc.send_signal(subprocess.signal.SIGINT)
+            # time.sleep(1)
 
             # TODO: Take shot
-            service_answer = apple_proxy_experiment.collect_image(True)
+            # service_answer = apple_proxy_experiment.collect_image(True)
 
 
             # Return to the ideal pose (simply the original real-apple pick)
