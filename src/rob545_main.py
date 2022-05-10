@@ -64,8 +64,8 @@ class AppleProxyExperiment(object):
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
         
-        rospy.wait_for_service('collect_image')
-        self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
+        # rospy.wait_for_service('collect_image')
+        # self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
         ## kinematic model and the robot's current joint states
@@ -145,7 +145,7 @@ class AppleProxyExperiment(object):
         self.stem_at_baselink = [0, 0, 0]
         self.stem_to_gravity = 126
 
-        # End Effector's psoe
+        # End Effector's pose
         self.pose_at_baselink = [0, 0, 0, 0, 0, 0, 0]     # x,y,z  and quaternion
 
 
@@ -1603,6 +1603,14 @@ class AppleProxyExperiment(object):
 def main():
     try:
 
+        # TODO Update the urdf with the location of the camera
+        # TODO Fix why is not recording bagfiles... at least the joint_states
+        # TODO Fix the apple scanning process - probe (palm)
+        # TODO Fix rviz
+        # TODO Cframes
+        # TODO account for the frames
+        # TODO male part of dove tail
+
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
         print("Apple Proxy experiments")
         apple_proxy_experiment = AppleProxyExperiment()
@@ -1610,15 +1618,15 @@ def main():
         # --- Initialize UR5 at home position if needed
         print(" Press 'Enter' to move arm into the original UR5 home position")
         raw_input()
-        # apple_proxy_experiment.go_home()
+        apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
         raw_input()
-        # apple_proxy_experiment.go_preliminary_position()
+        apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        # apple_proxy_experiment.scan_apple_and_stem()
+        apple_proxy_experiment.scan_apple_and_stem()
 
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
