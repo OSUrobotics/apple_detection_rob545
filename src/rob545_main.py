@@ -186,7 +186,7 @@ class AppleProxyExperiment(object):
         # Probe's parameters
         self.probe_length = 0.1  # Length of probe in m
         self.probe_base_width = 1.3 * 0.0254  # Width of the base of the probe in m
-        self.ref_frame = "base_link"
+        self.ref_frame = "world"
 
         self.sphereRadius = 0.25
         self.pointsPerOctant = 10
@@ -527,6 +527,8 @@ class AppleProxyExperiment(object):
         coord = [float(probe_base.pose.position.x), float(probe_base.pose.position.y),
                  float(probe_base.pose.position.z)]
         # print("The probe coordinates at the 'base_link' reference frame are:", coord)
+
+        print(coord)
 
         return coord
 
@@ -1638,9 +1640,10 @@ def main():
     try:
 
         # TODO Update the urdf with the location of the camera
-        # TODO Fix the apple scanning process - probe (palm)
         # TODO account for the frames
         # TODO male part of dove tail
+
+        # TODO Do final calibration of probe: measuring the location of tables, proxy, etc... and update urdf
 
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
         print("Apple Proxy experiments")
@@ -1657,7 +1660,7 @@ def main():
         apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        # apple_proxy_experiment.scan_apple_and_stem()
+        apple_proxy_experiment.scan_apple_and_stem()
 
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
