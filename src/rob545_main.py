@@ -1641,8 +1641,7 @@ def main():
 
         # TODO Update the urdf with the location of the camera
         # TODO account for the frames
-        # TODO save the points scanned with the probe
-        # TODO male part of dove tail
+        # TODO save the points scanned with the probe in the "base_link" frame, and save a csv with the info
 
         # TODO Do final calibration of probe: measuring the location of tables, proxy, etc... and update urdf
 
