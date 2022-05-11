@@ -38,7 +38,7 @@ rosrun apple_detection rob545_main.py
 ## With the real UR5 and visualize it in Rviz
 Terminal 1 (UR5 drivers):  
 ```console
-roslaunch ur_robot_driver ur5e_bringup.launch robot_ip:=169.254.177.232
+roslaunch apple_proxy ur5e_bringup.launch robot_ip:=169.254.177.232
 ```
 
 Terminal 2 (Motion planner - MoveIt & visualization - Rviz):  
