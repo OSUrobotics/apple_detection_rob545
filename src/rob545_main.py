@@ -627,7 +627,7 @@ class AppleProxyExperiment(object):
     """
 
         # --- Place a marker with text in RVIZ
-        text = "Going to an IDEAL Starting Position # " + str(index)
+        text = "Moving to a new shot - pose "
         self.place_marker_text(self.apple_pos_x, self.apple_pos_y, self.apple_pos_z + 0.5, 0.1, text)
 
         # --- Step 1: Find Gripper's Goal Pose Position
@@ -1638,11 +1638,8 @@ def main():
     try:
 
         # TODO Update the urdf with the location of the camera
-
         # TODO Fix the apple scanning process - probe (palm)
-        # TODO Cframes
         # TODO account for the frames
-
         # TODO male part of dove tail
 
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
