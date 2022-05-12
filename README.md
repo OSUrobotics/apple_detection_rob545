@@ -48,7 +48,7 @@ roslaunch apple_proxy pickApp_real.launch
 
 Terminal 3 (run command for camera):
 ```console
-roslaunch realsense2_camera rs_camera.launch filters:=pointcloud align_depth:=true 
+roslaunch realsense2_camera rs_camera.launch filters:=pointcloud align_depth:=true ordered_pc:=true allow_no_texture_points:=true
 ```
 
 Terminal 4 (Our code):  
