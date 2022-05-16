@@ -64,8 +64,8 @@ class AppleProxyExperiment(object):
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
         
-        rospy.wait_for_service('collect_image')
-        self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
+        # rospy.wait_for_service('collect_image')
+        # self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
         ## kinematic model and the robot's current joint states
@@ -188,7 +188,7 @@ class AppleProxyExperiment(object):
         self.probe_base_width = 1.3 * 0.0254  # Width of the base of the probe in m
         self.ref_frame = "world"
 
-        self.sphereRadius = 0.25
+        self.sphereRadius = 0.2
         self.pointsPerOctant = 10
 
     ## ... Hand Related Functions...
@@ -1557,17 +1557,14 @@ class AppleProxyExperiment(object):
     def publish_event(self, event):
         self.event_publisher.publish(event)
 
-    def write_csv(self, data, sub_name):
-        header = ["Environment",
-                  "f0_proximal", "f0_distal",
-                  "f1_proximal", "f1_distal",
-                  "f2_proximal", "f2_distal",
-                  "slip", "drop", "stem_moved", "success_or_failure",
-                  "apple wrt baselink", "calix wrt baselink", "stem wrt baselink",             # 11, 12, 13
-                  "eef_wrt_baselink",                    # 14
-                  "noise_wrt_tool"                      # 15        [x,y,z, roll, pitch, yaw]
+    def write_csv(self, data, folder, sub_name):
+        header = [
+                  "apple wrt baselink",
+                  "calix wrt baselink",
+                  "stem wrt baselink",
+                  # "eef_wrt_baselink"
                   ]
-        csv_name = "/home/avl/ur_ws/src/apple_proxy/bag_files/apple_proxy_pick" + str(sub_name) + "_metadata.csv"
+        csv_name = folder + sub_name + "_metadata.csv"
 
         with open(csv_name, 'wb') as f:
             writer = csv.writer(f)
@@ -1635,6 +1632,20 @@ class AppleProxyExperiment(object):
         rosbag_proc.send_signal(subprocess.signal.SIGINT)
         time.sleep(0.5)
 
+        # Also save a csv with metadata information
+        # Convert coordinates into baselink cframe
+        self.baselink_cframe()
+        csv_data = [0] * 10
+        # Apple and Stem Ground Truth
+        csv_data[0] = self.apple_at_baselink
+        csv_data[1] = self.calix_at_baselink
+        csv_data[2] = self.stem_at_baselink
+        # End Effector Pose
+        # csv_data[3] = self.pose_at_baselink
+
+        self.write_csv(csv_data, folder, name)
+
+
 
 def main():
     try:
@@ -1642,8 +1653,6 @@ def main():
         # TODO Update the urdf with the location of the camera
         # TODO account for the frames
         # TODO save the points scanned with the probe in the "base_link" frame, and save a csv with the info
-
-        # TODO Do final calibration of probe: measuring the location of tables, proxy, etc... and update urdf
 
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
         print("Apple Proxy experiments")
