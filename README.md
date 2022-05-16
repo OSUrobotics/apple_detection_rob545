@@ -7,8 +7,8 @@ https://github.com/IntelRealSense/realsense-ros
 
 # Instructions
 
-## Other required packages
-Step in the same workspace: ~/your_ws/src/  
+## 1 - Install additional required packages
+Step in the same workspace: ~/YOUR_WS/src/  
 ```console
 git clone https://github.com/velasale/apple_proxy
 ```
@@ -23,6 +23,21 @@ sudo apt-get install ros-melodic-realsense2-camera
 ```console
 sudo apt-get install ros-melodic-realsense2-description
 ```
+
+
+## 2 - Make sure that you source your ws
+Option 1 - Everytime you open a terminal
+```console
+source ~/YOUR_WS/devel/setup.bash
+```
+
+Option 2 - Edit the ".bashrc" file, so you do not need to run it everytime
+```console
+gedit ~/.bashrc
+```
+
+and add the text from Option 1 at the end of the file t
+
 
 ## Only visualization (Rviz) 
 Terminal 1 (Motion planner - MoveIt & visualization - Rviz):  
