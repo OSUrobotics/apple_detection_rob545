@@ -38,8 +38,8 @@ gedit ~/.bashrc
 
 and add the text from Option 1 at the end of the file t
 
-
-## Only visualization (Rviz) 
+## 3 - Run the packages
+### 3.1 - Only visualization (Rviz) 
 Terminal 1 (Motion planner - MoveIt & visualization - Rviz):  
 ```console
 roslaunch apple_proxy pickApp.launch
@@ -50,7 +50,7 @@ Terminal 2 (Our code):
 rosrun apple_detection rob545_main.py
 ```
 
-## With the real UR5 and visualize it in Rviz
+### 3.2 - With the real UR5 and visualize it in Rviz
 Terminal 1 (UR5 drivers):  
 ```console
 roslaunch apple_proxy ur5e_bringup.launch robot_ip:=169.254.177.232
