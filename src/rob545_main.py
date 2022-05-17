@@ -64,8 +64,8 @@ class AppleProxyExperiment(object):
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
         
-        # rospy.wait_for_service('collect_image')
-        # self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
+        rospy.wait_for_service('collect_image')
+        self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
         ## kinematic model and the robot's current joint states
@@ -190,6 +190,7 @@ class AppleProxyExperiment(object):
 
         self.sphereRadius = 0.2
         self.pointsPerOctant = 10
+        self.success = False
 
     ## ... Hand Related Functions...
 
@@ -698,18 +699,18 @@ class AppleProxyExperiment(object):
         # Save this pose in a global variable, to come back to it after picking the apple
         self.previous_pose = current_pose
 
-        success = all_close(pose_goal, current_pose, 0.01)
-        self.pose_starts.append(success)
+        self.success = all_close(pose_goal, current_pose, 0.01)
+        self.pose_starts.append(self.success)
 
         # Place a blue dot in the sphere's surface to keep track of all the sampled points
-        if success:
+        if self.success:
             self.place_marker_sphere(0, 1, 0, 1, x, y, z, 0.04)
         else:
             self.place_marker_sphere(1, 0, 0, 1, x, y, z, 0.02)
 
         print("Pose Starts history", self.pose_starts)
 
-        return success
+        return self.success
 
     def align_with_stem(self):
         """This function takes the gripper to the IDEAL starting position, before adding noise
@@ -1652,7 +1653,6 @@ def main():
 
         # TODO Update the urdf with the location of the camera
         # TODO account for the frames
-        # TODO save the points scanned with the probe in the "base_link" frame, and save a csv with the info
 
         # ------------------------------------- Step 1 - Initial Setup -------------------------------------------------
         print("Apple Proxy experiments")
@@ -1692,7 +1692,9 @@ def main():
             apple_proxy_experiment.go_to_starting_position(shot)
 
             # Take a bagfile shot of the topics
-            apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
+            if apple_proxy_experiment.success:
+                print("Savig Bagfile and csv file of shot No:", shot)
+                apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
 
             # TODO: Take shot
             # service_answer = apple_proxy_experiment.collect_image(True)
