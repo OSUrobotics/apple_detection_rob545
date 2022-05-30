@@ -9,7 +9,16 @@ from plotly.subplots import make_subplots
 import plotly.express as px
 import pandas as pd
 import open3d as o3d
+import struct
 
+# Bit hack to bitwise convert float to three 8 bit ints
+def float_to_rgb(f):
+    s = struct.pack('>f', f)
+    bits = struct.unpack('>l', s)[0]
+    r = bits & 0xFF
+    g = bits >> 8 & 0xFF
+    b = bits >> 16 & 0xFF
+    return (r,g,b)
 
 ################################################################################*
 #* Image Segemntation Helper funcs
