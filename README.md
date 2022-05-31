@@ -50,6 +50,11 @@ Terminal 2 (Our code):
 rosrun apple_detection rob545_main.py
 ```
 
+Terminal 3 (Our code): adds tf frame for the camera. 
+```console
+rosrun apple_detection camera_frame.py
+```
+
 ### 3.2 - With the real UR5 and visualize it in Rviz
 Terminal 1 (UR5 drivers):  
 ```console
@@ -76,4 +81,8 @@ Terminal 5 (Our code):
 rosrun apple_detection rob545_main.py
 ```
 
+Terminal 6 (Our code): adds tf frame for the camera. 
+```console
+rosrun apple_detection camera_frame.py
+```
 

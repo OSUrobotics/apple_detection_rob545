@@ -22,24 +22,26 @@ if __name__ == '__main__':
 
     rospy.init_node('camera_frame_tf')
 
-    camera_transform = np.array([
-                                [1, 0, 0, 0.02],
-                                [0, 1, 0, -0.1],
-                                [0, 0, 1, 0],
-                                [0, 0, 0, 1]])
+    # camera_transform = np.array([
+    #                             [1, 0, 0, 0.02],
+    #                             [0, 1, 0, -0.1],
+    #                             [0, 0, 1, 0],
+    #                             [0, 0, 0, 1]])
 
     # setting up the camera frame
-    trans2 = tf.transformations.translation_from_matrix(camera_transform)
-    rot2 = tf.transformations.quaternion_from_matrix(camera_transform)
+    # trans2 = tf.transformations.translation_from_matrix(camera_transform)
+    # rot2 = tf.transformations.quaternion_from_matrix(camera_transform)
+    camera_tranlation = (0.0221, -0.0538, 0.05223)
+    camera_rot = tf.transformations.quaternion_from_euler(0, 0, pi/4)
     
-    # br = tf.TransformBroadcaster()
+    
     camera_world = tf.TransformBroadcaster()
-    # aruco_ee = tf.TransformBroadcaster()
+    
 
     rate = rospy.Rate(10.0)
 
     while not rospy.is_shutdown():
-        # br.sendTransform(tuple(trans), tuple(rot), rospy.Time.now(), 'world_frame', 'j2s7s300_link_base') # j2s7s300_end_effector
-        camera_world.sendTransform(tuple(trans2), tuple(rot2), rospy.Time.now(), 'camera_frame', 'tool0')
-        # aruco_ee.sendTransform(trans3, tuple(rot3), rospy.Time.now(), 'aruco_endeffector', 'j2s7s300_end_effector')
+        
+        camera_world.sendTransform(camera_tranlation, tuple(camera_rot), rospy.Time.now(), 'camera_frame', 'tool0')
+        
         rate.sleep()

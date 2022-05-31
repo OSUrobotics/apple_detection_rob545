@@ -64,7 +64,7 @@ class AppleProxyExperiment(object):
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
         
-        rospy.wait_for_service('collect_image')
+        # rospy.wait_for_service('collect_image')
         self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
