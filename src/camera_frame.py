@@ -17,7 +17,7 @@ import sys
 if __name__ == '__main__':
 
     ###################################################################################
-    # Creates the camera, world, and the aruco_end_effector frames to TF to be used later 
+    # Creates the camera frame to TF 
     ###################################################################################
 
     rospy.init_node('camera_frame_tf')
