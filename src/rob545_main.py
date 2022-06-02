@@ -190,6 +190,7 @@ class AppleProxyExperiment(object):
 
         self.sphereRadius = 0.2
         self.pointsPerOctant = 10
+        self.offset = 0
         self.success = False
 
     ## ... Hand Related Functions...
@@ -1563,6 +1564,8 @@ class AppleProxyExperiment(object):
                   "apple wrt baselink",
                   "calix wrt baselink",
                   "stem wrt baselink",
+                  "sphere radius"
+                  "offset"
                   # "eef_wrt_baselink"
                   ]
         csv_name = folder + sub_name + "_metadata.csv"
@@ -1641,11 +1644,12 @@ class AppleProxyExperiment(object):
         csv_data[0] = self.apple_at_baselink
         csv_data[1] = self.calix_at_baselink
         csv_data[2] = self.stem_at_baselink
+        csv_data[3] = self.sphereRadius
+        csv_data[4] = self.offset
         # End Effector Pose
         # csv_data[3] = self.pose_at_baselink
 
         self.write_csv(csv_data, folder, name)
-
 
 
 def main():
@@ -1691,7 +1695,7 @@ def main():
             # Place ee at each point saved with coordinates self.x_coord, self.y_coord and self.z_coord
             apple_proxy_experiment.go_to_starting_position(shot)
 
-            # Take a bagfile shot of the topics
+            # Take a bagfile shot of the topics, and save bagfile only if it reached the goal
             if apple_proxy_experiment.success:
                 print("Savig Bagfile and csv file of shot No:", shot)
                 apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
