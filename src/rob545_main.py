@@ -133,9 +133,9 @@ class AppleProxyExperiment(object):
         self.group_names = group_names
 
         # Apple's and Stem Position
-        self.apple_pos_x = - 0.6663  # Apple position in x-axis [m]
-        self.apple_pos_y = + 0.1730  # Apple position in y-axis [m]
-        self.apple_pos_z = + 0.6  # Apple position in z-axis [m] : Height from the + Distance from table to,
+        self.apple_pos_x = - 0.456  # Apple position in x-axis [m]
+        self.apple_pos_y = - 0.25  # Apple position in y-axis [m]
+        self.apple_pos_z = + 1.251  # Apple position in z-axis [m] : Height from the + Distance from table to,
         self.apple_diam = 7.5  # Apple's diameter [cm]
         self.apple_at_baselink = [0, 0, 0]
 
@@ -1682,12 +1682,12 @@ def main():
         apple_proxy_experiment.go_preliminary_position()
 
         # ------------------------------------- Step 2 - Use probe -----------------------------------------------------
-        apple_proxy_experiment.scan_apple_and_stem()
+        # apple_proxy_experiment.scan_apple_and_stem()
 
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
-        apple_proxy_experiment.sphereRadius = 0.55  # Radius in [m]
+        apple_proxy_experiment.sphereRadius = 0.35  # Radius in [m]
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
@@ -1711,7 +1711,7 @@ def main():
 
                 print("Calling services")
                 # TODO: Take shot
-                # service_answer = apple_proxy_experiment.collect_image(True)
+                service_answer = apple_proxy_experiment.collect_image(True)
 
 
 
