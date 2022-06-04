@@ -18,6 +18,7 @@ import csv
 from sensor_msgs.msg import PointCloud2, Image, JointState
 import sensor_msgs.point_cloud2 as pc2
 from apple_detection.srv import CollectImageData, CollectImageDataResponse
+import pickle
 
 
 
@@ -42,7 +43,11 @@ class ImageCollector:
 			cv2.imwrite("{}/rgb_pose{}.bmp".format(directory_loc,self.pose_number), self.rgb_image)
 			cv2.imwrite("{}/depth_pose{}.bmp".format(directory_loc,self.pose_number), self.depth_image)
 			np.savetxt("{}/depth_pose{}.csv".format(directory_loc,self.pose_number), self.depth_array, delimiter=",")
-			np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
+
+			with open("{}/PointCloud_pose{}.pickle".format(directory_loc, self.pose_number), mode="wb") as pickle_file:
+				pickle.dump(self.point_cloud_data, pickle_file, protocol=2)
+
+			# np.savetxt("{}/PointCloud_pose{}.csv".format(directory_loc, self.pose_number), self.point_cloud_data, delimiter=",")
 			transform = self.get_transform()
 
 			file = open("{}/transform_pose{}.csv".format(directory_loc, self.pose_number), "w")
