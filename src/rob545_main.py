@@ -64,7 +64,7 @@ class AppleProxyExperiment(object):
         moveit_commander.roscpp_initialize(sys.argv)
         rospy.init_node('apple_proxy_experiment', anonymous=True)
         
-        # rospy.wait_for_service('collect_image')
+        rospy.wait_for_service('collect_image')
         self.collect_image = rospy.ServiceProxy('collect_image', CollectImageData)
 
         ## Instantiate a `RobotCommander`_ object. Provides information such as the robot's
@@ -133,9 +133,9 @@ class AppleProxyExperiment(object):
         self.group_names = group_names
 
         # Apple's and Stem Position
-        self.apple_pos_x = - 0.497  # Apple position in x-axis [m]
-        self.apple_pos_y = - 0.278  # Apple position in y-axis [m]
-        self.apple_pos_z = + 1.306  # Apple position in z-axis [m] : Height from the + Distance from table to,
+        self.apple_pos_x = - 0.6663  # Apple position in x-axis [m]
+        self.apple_pos_y = + 0.1730  # Apple position in y-axis [m]
+        self.apple_pos_z = + 0.6  # Apple position in z-axis [m] : Height from the + Distance from table to,
         self.apple_diam = 7.5  # Apple's diameter [cm]
         self.apple_at_baselink = [0, 0, 0]
 
@@ -206,7 +206,7 @@ class AppleProxyExperiment(object):
 
     ## ... Rviz marker related functions
 
-    def place_marker_text(self, x, y, z, scale, text):
+    def place_marker_text(self, x, y, z, scale, text, keep='False'):
         """
     Creates a text as a Marker
     @ r,g,b: Indexes of the color in rgb format
@@ -226,7 +226,11 @@ class AppleProxyExperiment(object):
         # Each marker has a unique ID number.  If you have more than one marker that you want displayed at a
         # given time, then each needs to have a unique ID number.  If you publish a new marker with the same
         # ID number and an existing marker, it will replace the existing marker with that ID number.
-        caption.id = 0
+        if keep == True:
+            caption.id = self.marker_id + 1
+            self.marker_id = caption.id
+        else:
+            caption.id = 0
 
         # Set the action.  We can add, delete, or modify markers.
         caption.action = caption.ADD
@@ -255,7 +259,11 @@ class AppleProxyExperiment(object):
         caption.pose.position.z = z
 
         # Set up a publisher.  We're going to publish on a topic called balloon.
-        self.markerTextPublisher.publish(caption)
+        if keep == 'True':
+            self.proxy_markers.append(caption)
+            self.markerPublisher.publish(self.proxy_markers)
+        else:
+            self.markerTextPublisher.publish(caption)
 
         # Set a rate.  10 Hz is a good default rate for a marker moving with the Fetch robot.
         rate = rospy.Rate(10)
@@ -703,9 +711,10 @@ class AppleProxyExperiment(object):
         self.success = all_close(pose_goal, current_pose, 0.01)
         self.pose_starts.append(self.success)
 
-        # Place a blue dot in the sphere's surface to keep track of all the sampled points
+        # Place a dot in the sphere's surface to keep track of all the sampled points
         if self.success:
             self.place_marker_sphere(0, 1, 0, 1, x, y, z, 0.04)
+            self.place_marker_text(x, y, z+0.05, 0.1, str(index), True)
         else:
             self.place_marker_sphere(1, 0, 0, 1, x, y, z, 0.02)
 
@@ -1564,7 +1573,7 @@ class AppleProxyExperiment(object):
                   "apple wrt baselink",
                   "calix wrt baselink",
                   "stem wrt baselink",
-                  "sphere radius"
+                  "sphere radius",
                   "offset"
                   # "eef_wrt_baselink"
                   ]
@@ -1665,7 +1674,7 @@ def main():
         # --- Initialize UR5 at home position if needed
         print(" Press 'Enter' to move arm into the original UR5 home position")
         raw_input()
-        apple_proxy_experiment.go_home()
+        # apple_proxy_experiment.go_home()
 
         # --- Bring UR5 into a preliminary position to avoid weird poses
         print(" Press 'Enter' to move arm into a preliminary starting position")
@@ -1678,7 +1687,7 @@ def main():
         # Place Apple, Sphere and Stem, in RVIZ with the Ground Truth Location (from probe)
         print(" Place apple, stem and Sphere in rviz in their Ground Truth location")
         raw_input()
-        apple_proxy_experiment.sphereRadius = 0.4   # Radius in [m]
+        apple_proxy_experiment.sphereRadius = 0.55  # Radius in [m]
         apple_proxy_experiment.place_apple_and_stem()
 
         # Make Sure to go back to the preliminary position
@@ -1700,8 +1709,11 @@ def main():
                 print("Savig Bagfile and csv file of shot No:", shot)
                 apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
 
-            # TODO: Take shot
-            service_answer = apple_proxy_experiment.collect_image(True)
+                print("Calling services")
+                # TODO: Take shot
+                # service_answer = apple_proxy_experiment.collect_image(True)
+
+
 
             # --- At the end ----
             print("\nHit 'Enter' to try the next Shot")
