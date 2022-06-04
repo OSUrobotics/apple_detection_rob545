@@ -1701,7 +1701,7 @@ def main():
                 apple_proxy_experiment.save_bagfile("trial", shot, 1.0)
 
             # TODO: Take shot
-            # service_answer = apple_proxy_experiment.collect_image(True)
+            service_answer = apple_proxy_experiment.collect_image(True)
 
             # --- At the end ----
             print("\nHit 'Enter' to try the next Shot")
